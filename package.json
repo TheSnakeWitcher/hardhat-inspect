@@ -19,7 +19,8 @@
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc",
     "watch": "tsc -w",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "postinstall": "pnpm run build"
   },
   "files": [
     "dist/src/",
