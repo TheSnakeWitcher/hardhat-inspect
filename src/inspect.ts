@@ -54,7 +54,7 @@ export class Inspect {
             events[contractName] = contractEvents
         }
 
-        return errors
+        return { contractNames, errors, events }
     }
 
     private getData(abi: any) {
@@ -77,9 +77,14 @@ export class Inspect {
     }
 
     async save(contractNames: ContractName, errors: ContractItem, events: ContractItem) {
-        const contractNamesFile = path.join(hre.config.paths.data, "contractNames.json")
-        const eventsFile = path.join(hre.config.paths.data, "events.json")
-        const errorsFile = path.join(hre.config.paths.data, "errors.json")
+        const dataPath = hre.config.paths.data
+        if ( !fs.existsSync(dataPath) ) {
+            fs.mkdirSync(dataPath)
+        }
+
+        const contractNamesFile = path.join(dataPath, "contractNames.json")
+        const eventsFile = path.join(dataPath, "events.json")
+        const errorsFile = path.join(dataPath, "errors.json")
 
         fs.writeFileSync(contractNamesFile, JSON.stringify(contractNames))
         fs.writeFileSync(eventsFile, JSON.stringify(events))
