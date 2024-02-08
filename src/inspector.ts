@@ -1,3 +1,4 @@
+import { HardhatRuntimeEnvironment } from "hardhat/types"
 import fs from "fs"
 import path from "path"
 
@@ -13,25 +14,24 @@ interface ContractName {
     [contractName: string]: string;
 }
 
-export class Inspect {
+export class Inspector {
     public contractNames : ContractName = {} ;
     public events : ContractItem = {} ;
     public errors : ContractItem = {} ;
+    public functionSelectors : ContractItem = {} ;
+    private env ;
 
-    constructor() {
+    constructor(env: HardhatRuntimeEnvironment) {
         this.contractNames = {}
         this.events = {}
         this.errors = {}
+        this.functionSelectors = {}
+        this.env = env ;
     }
 
-    async refresh() {
-
-        let contractNames: any = {}
-        let events: any = {}
-        let errors: any = {}
-
-        const artifactsPath = hre.config.paths.artifacts
-        const artifacts = (await hre.artifacts.getArtifactPaths()).filter( (artifact: string) => {
+    public async refresh() {
+        const artifactsPath = this.env.config.paths.artifacts
+        const artifacts = (await this.env.artifacts.getArtifactPaths()).filter( (artifact: string) => {
             return path.relative(artifactsPath, artifact).startsWith("contracts")
         })
 
@@ -41,7 +41,7 @@ export class Inspect {
             let artifactContent
 
             try {
-                artifactContent = await hre.artifacts.readArtifact(sourceName)
+                artifactContent = await this.env.artifacts.readArtifact(sourceName)
             } catch (err) {
                 continue
             }
@@ -49,12 +49,17 @@ export class Inspect {
             const contractName = artifactContent.contractName
             const { events: contractEvents , errors: contractErrors } = this.getData(artifactContent.abi)
 
-            contractNames[contractName] = contractName
-            errors[contractName] = contractErrors
-            events[contractName] = contractEvents
+            this.contractNames[contractName] = contractName
+            this.errors[contractName] = contractErrors
+            this.events[contractName] = contractEvents
+            this.functionSelectors[contractName] = contractEvents
         }
 
-        return { contractNames, errors, events }
+        return {
+            contractNames: this.contractNames,
+            errors: this.errors,
+            events: this.events
+        }
     }
 
     private getData(abi: any) {
@@ -64,11 +69,11 @@ export class Inspect {
         for (let item of abi) {
 
             if (item.type == "error") {
-                errors[item.name] = [item.name]
+                errors[item.name] = item.name
             }
 
             if (item.type == "event") {
-                events[item.name] = [item.name]
+                events[item.name] = item.name
             }
 
         }
@@ -76,8 +81,8 @@ export class Inspect {
         return { errors, events }
     }
 
-    async save(contractNames: ContractName, errors: ContractItem, events: ContractItem) {
-        const dataPath = hre.config.paths.data
+    public async save() {
+        const dataPath = this.env.config.paths.data
         if ( !fs.existsSync(dataPath) ) {
             fs.mkdirSync(dataPath)
         }
@@ -86,9 +91,10 @@ export class Inspect {
         const eventsFile = path.join(dataPath, "events.json")
         const errorsFile = path.join(dataPath, "errors.json")
 
-        fs.writeFileSync(contractNamesFile, JSON.stringify(contractNames))
-        fs.writeFileSync(eventsFile, JSON.stringify(events))
-        fs.writeFileSync(errorsFile, JSON.stringify(errors))
+        const SPACE = 4 ;
+        fs.writeFileSync(contractNamesFile, JSON.stringify(this.contractNames, null, SPACE))
+        fs.writeFileSync(eventsFile, JSON.stringify(this.events, null, SPACE))
+        fs.writeFileSync(errorsFile, JSON.stringify(this.errors, null, SPACE))
     }
 
 }
