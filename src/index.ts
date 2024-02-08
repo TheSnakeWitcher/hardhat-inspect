@@ -3,7 +3,7 @@ import { lazyObject } from "hardhat/plugins";
 import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 import path from "path";
 
-import { Inspect } from "./inspect";
+import { Inspector } from "./inspector";
 import "./type-extensions";
 
 extendConfig( (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
@@ -23,13 +23,13 @@ extendConfig( (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) =
     config.paths.data = dataPath;
 });
 
-extendEnvironment( (hre: any) => {
-    hre.inspect = lazyObject(() => new Inspect());
+extendEnvironment( (env: any) => {
+    env.inspect = lazyObject( () => new Inspector(env));
 });
 
-task("compile", async function(args: any, hre: any, runSuper: any) {
+task("compile", async function(args: any, env: any, runSuper: any) {
     await runSuper(args);
-    const inspect = new Inspect()
-    const { contractNames, events, errors } = await inspect.refresh()
-    await inspect.save(contractNames, events, errors)
+    const inspect = new Inspector(env)
+    await inspect.refresh()
+    await inspect.save()
 })
