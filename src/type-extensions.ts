@@ -1,7 +1,7 @@
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
-import { Inspect } from "./inspect";
+import { Inspector } from "./inspector";
 
 declare module "hardhat/types/config" {
     export interface ProjectPathsUserConfig {
@@ -15,6 +15,6 @@ declare module "hardhat/types/config" {
 
 declare module "hardhat/types/runtime" {
     export interface HardhatRuntimeEnvironment {
-        inspect: Inspect;
+        inspect: Inspector;
     }
 }
