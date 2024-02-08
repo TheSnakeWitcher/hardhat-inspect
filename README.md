@@ -36,13 +36,13 @@ conveniently some data after compilation.
 ## Environment extensions
 
 
-Adds a `inspect` field whose type is `Inspect` to `hre`.
+Adds a `inspect` field to `hre` with type `Inspector` .
 
 
 ## Configuration
 
 
-This plugin `hre.config.paths` with an optional field `data` where all data that `haardhat-inspect` find 
+This plugin extend `hre.config.paths` with an optional field `data` where all data that `hardhat-inspect` find 
 is saved, by default it use a `data` directory in the project root.
 
 
@@ -50,5 +50,5 @@ is saved, by default it use a `data` directory in the project root.
 
 
 To use you can import the data that you need conveniently from the json files in the configured `data` path
-or call to `hre.inspect.refresh()` and then access all data directly from `hre.inspect.{data-of-interest}`
+or call to `await hre.inspect.refresh()` and then access all data directly from `hre.inspect.{data-of-interest}`
 where `{data-of-interest}` could be `contractNames`, `errors` or `events`.
