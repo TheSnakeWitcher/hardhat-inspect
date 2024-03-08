@@ -15,10 +15,10 @@ interface ContractName {
 }
 
 export class Inspector {
-    public contractNames : ContractName = {} ;
-    public events : ContractItem = {} ;
-    public errors : ContractItem = {} ;
-    public functionSelectors : ContractItem = {} ;
+    public contractNames : ContractName ;
+    public events : ContractItem ;
+    public errors : ContractItem ;
+    public functionSelectors : ContractItem ;
     private env ;
 
     constructor(env: HardhatRuntimeEnvironment) {
