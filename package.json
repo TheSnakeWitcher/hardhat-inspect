@@ -1,7 +1,8 @@
 {
   "name": "hardhat-inspect",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "Inspect some data of a hardhat project conveniently",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/TheSnakeWitcher/hardhat-inspect.git"
