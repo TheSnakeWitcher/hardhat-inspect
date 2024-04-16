@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/TheSnakeWitcher/hardhat-inspect.git"
   },
-  "author": "Alejandro Virelels <thesnakewitcher@gmail.com>",
+  "author": "Alejandro Virelles <thesnakewitcher@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,8 +22,7 @@
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc",
     "watch": "tsc -w",
-    "prepublishOnly": "pnpm run build",
-    "postinstall": "pnpm run build"
+    "prepublishOnly": "pnpm run build"
   },
   "files": [
     "dist/src/",
