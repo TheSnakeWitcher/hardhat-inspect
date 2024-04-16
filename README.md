@@ -10,7 +10,7 @@ A plugin to conveniently inspect some data of a [hardhat](https://hardhat.org)  
 To install run
 
 ```bash
-pnpm hardhat-inspect -D
+pnpm add hardhat-inspect -D
 ```
 
 Import the plugin in your `hardhat.config.ts`:
