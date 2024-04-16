@@ -1,6 +1,6 @@
 {
   "name": "hardhat-inspect",
-  "version": "0.1.5",
+  "version": "0.1.4",
   "description": "Inspect some data of a hardhat project conveniently",
   "repository": {
     "type": "git",
@@ -8,8 +8,8 @@
   },
   "author": "Alejandro Virelles <thesnakewitcher@gmail.com>",
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "ethereum",
     "smart-contracts",
