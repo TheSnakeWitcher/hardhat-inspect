@@ -2,7 +2,10 @@
   "name": "hardhat-inspect",
   "version": "0.0.1",
   "description": "Inspect some data of a hardhat project conveniently",
-  "repository": "github:TheSnakeWitcher/hardhat-inspect",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheSnakeWitcher/hardhat-inspect.git"
+  },
   "author": "Alejandro Virelels <thesnakewitcher@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
