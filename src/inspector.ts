@@ -10,22 +10,22 @@ interface Item {
     [itemname: string]: string;
 }
 
-interface ContractName {
+interface ContractAttribute {
     [contractName: string]: string;
 }
 
 export class Inspector {
-    public contractNames : ContractName ;
+    public contractNames : ContractAttribute ;
+    public abis : any ;
     public events : ContractItem ;
     public errors : ContractItem ;
-    public functionSelectors : ContractItem ;
     private env ;
 
     constructor(env: HardhatRuntimeEnvironment) {
         this.contractNames = {}
         this.events = {}
         this.errors = {}
-        this.functionSelectors = {}
+        this.abis = {}
         this.env = env ;
     }
 
@@ -52,7 +52,7 @@ export class Inspector {
             this.contractNames[contractName] = contractName
             this.errors[contractName] = contractErrors
             this.events[contractName] = contractEvents
-            this.functionSelectors[contractName] = contractEvents
+            this.abis[contractName] = artifactContent.abi
         }
 
         return {
@@ -83,18 +83,33 @@ export class Inspector {
 
     public async save() {
         const dataPath = this.env.config.paths.data
-        if ( !fs.existsSync(dataPath) ) {
-            fs.mkdirSync(dataPath)
-        }
+        this.createDirIfNotExists(dataPath)
 
         const contractNamesFile = path.join(dataPath, "contractNames.json")
         const eventsFile = path.join(dataPath, "events.json")
         const errorsFile = path.join(dataPath, "errors.json")
+        const abisPath = path.join(dataPath, "abis")
 
-        const SPACE = 4 ;
+        const SPACE = 2 ;
         fs.writeFileSync(contractNamesFile, JSON.stringify(this.contractNames, null, SPACE))
         fs.writeFileSync(eventsFile, JSON.stringify(this.events, null, SPACE))
         fs.writeFileSync(errorsFile, JSON.stringify(this.errors, null, SPACE))
+        this.saveAbis(abisPath);
+    }
+
+    private saveAbis(abisPath: string) {
+        this.createDirIfNotExists(abisPath)
+        for (let contract in this.contractNames) {
+            const abi = this.abis[contract]
+            const out = path.join(abisPath, `${contract}.json`)
+            fs.writeFileSync(out, JSON.stringify(abi, null, 2))
+        }
+    }
+
+    private createDirIfNotExists(dir: string) {
+        if ( !fs.existsSync(dir) ) {
+            fs.mkdirSync(dir)
+        }
     }
 
 }
