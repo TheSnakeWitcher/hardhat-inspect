@@ -60,8 +60,9 @@ export class HardhatDeployDeploymentFetcher {
             .filter( filename => filename.match(/\.json$/))
             .forEach( (filename) => {
                 const file = path.join(networkDeploymentDir, filename)
+                const deploymentId = filename.split('.')[0]
                 const address = (JSON.parse(fs.readFileSync(file).toString())).address
-                chainDeployments[filename] = address
+                chainDeployments[deploymentId] = address
             })
 
         return chainDeployments
