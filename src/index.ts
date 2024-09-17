@@ -29,7 +29,15 @@ extendEnvironment( (env: any) => {
 
 task("compile", async function(args: any, env: any, runSuper: any) {
     await runSuper(args);
+    await inspect(env)
+})
+
+task("inspect", async function(args: any, env: any, runSuper: any) {
+    await inspect(env)
+})
+
+async function inspect(env: any) {
     const inspect = new Inspector(env)
     await inspect.refresh()
     await inspect.save()
-})
+}

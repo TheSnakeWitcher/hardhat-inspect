@@ -2,6 +2,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types"
 import fs from "fs"
 import path from "path"
 
+import {
+    Deployments,
+    HardhatDeployDeploymentFetcher,
+} from "./deployment-resolver"
+
 interface ContractItem {
     [contractname: string]: Item;
 }
@@ -19,6 +24,7 @@ export class Inspector {
     public abis : any ;
     public events : ContractItem ;
     public errors : ContractItem ;
+    public deployments: Deployments ;
     private env ;
 
     constructor(env: HardhatRuntimeEnvironment) {
@@ -26,6 +32,7 @@ export class Inspector {
         this.events = {}
         this.errors = {}
         this.abis = {}
+        this.deployments = {}
         this.env = env ;
     }
 
@@ -38,8 +45,8 @@ export class Inspector {
         for (let artifact of artifacts) {
             const source = path.basename(path.dirname(artifact))
             const sourceName = source.replace(path.extname(source),"")
-            let artifactContent
 
+            let artifactContent
             try {
                 artifactContent = await this.env.artifacts.readArtifact(sourceName)
             } catch (err) {
@@ -54,11 +61,20 @@ export class Inspector {
             this.events[contractName] = contractEvents
             this.abis[contractName] = artifactContent.abi
         }
+        
+        this.deployments = this.refreshDeployments()!
 
         return {
             contractNames: this.contractNames,
             errors: this.errors,
             events: this.events
+        }
+    }
+
+    private refreshDeployments() {
+        const hardhatDeployFetcher = new HardhatDeployDeploymentFetcher()
+        if (hardhatDeployFetcher.checkDeployments(this.env)) {
+            return hardhatDeployFetcher.fetchDeployments(this.env)
         }
     }
 
@@ -88,12 +104,14 @@ export class Inspector {
         const contractNamesFile = path.join(dataPath, "contractNames.json")
         const eventsFile = path.join(dataPath, "events.json")
         const errorsFile = path.join(dataPath, "errors.json")
+        const deploymentsFile = path.join(dataPath, "deployments.json")
         const abisPath = path.join(dataPath, "abis")
 
         const SPACE = 2 ;
         fs.writeFileSync(contractNamesFile, JSON.stringify(this.contractNames, null, SPACE))
         fs.writeFileSync(eventsFile, JSON.stringify(this.events, null, SPACE))
         fs.writeFileSync(errorsFile, JSON.stringify(this.errors, null, SPACE))
+        fs.writeFileSync(deploymentsFile, JSON.stringify(this.deployments, null, SPACE))
         this.saveAbis(abisPath);
     }
 
