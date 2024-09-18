@@ -2,10 +2,12 @@ import fs from "fs"
 import path from "path"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 
-export type Deployments = {
-    [id: string]:  {
-        [chainId: number]: string
-    }
+export interface Deployments {
+    [id: string]:  Deployment
+}
+
+export interface Deployment {
+    [chainId: number]: string
 }
 
 export interface DeploymentFetcher {

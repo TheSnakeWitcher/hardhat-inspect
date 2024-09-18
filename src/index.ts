@@ -6,6 +6,8 @@ import path from "path";
 import { Inspector } from "./inspector";
 import "./type-extensions";
 
+export { Deployments, Deployment } from "./deployment-resolver";
+
 extendConfig( (config: HardhatConfig, userConfig: Readonly<HardhatUserConfig>) => {
     const userPath = userConfig.paths?.data;
 
