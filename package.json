@@ -1,6 +1,6 @@
 {
   "name": "hardhat-inspect",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Inspect some data of a hardhat project conveniently",
   "repository": {
     "type": "git",
