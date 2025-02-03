@@ -3,7 +3,7 @@ import path from "path"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 
 export interface Deployments {
-    [id: string]:  Deployment
+    [deploymentId: string]:  Deployment
 }
 
 export interface Deployment {
@@ -16,7 +16,6 @@ export interface DeploymentFetcher {
 }
 
 export class HardhatDeployDeploymentFetcher {
-
     fetchDeployments(env: HardhatRuntimeEnvironment) {
         const deploymentsDir = this.getDeploymentsDir(env)
         const networkDeployments = fs.readdirSync(deploymentsDir)
@@ -43,7 +42,7 @@ export class HardhatDeployDeploymentFetcher {
     }
 
     checkDeployments(env: HardhatRuntimeEnvironment) {
-        return this.getDeploymentsDir(env) !== undefined
+        return fs.existsSync(this.getDeploymentsDir(env))
     }
 
     getDeploymentsDir(env: HardhatRuntimeEnvironment) {
@@ -69,11 +68,9 @@ export class HardhatDeployDeploymentFetcher {
 
         return chainDeployments
     }
-
 }
 
 export class HardhatIgnitionDeploymentFetcher {
-
     fetchDeployments(env: HardhatRuntimeEnvironment) {
         const deploymentsDir = this.getDeploymentsDir(env)
         const networkDeployments = fs.readdirSync(deploymentsDir)
@@ -100,7 +97,7 @@ export class HardhatIgnitionDeploymentFetcher {
     }
 
     checkDeployment(env: HardhatRuntimeEnvironment) {
-        return this.getDeploymentsDir(env) !== undefined
+        return fs.existsSync(this.getDeploymentsDir(env))
     }
 
     getDeploymentsDir(env: HardhatRuntimeEnvironment) {
@@ -118,5 +115,4 @@ export class HardhatIgnitionDeploymentFetcher {
         const chainDeployments = JSON.parse(fs.readFileSync(file).toString())
         return chainDeployments
     }
-
 }
