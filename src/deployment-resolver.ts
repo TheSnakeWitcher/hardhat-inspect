@@ -96,7 +96,7 @@ export class HardhatIgnitionDeploymentFetcher {
         return deployments
     }
 
-    checkDeployment(env: HardhatRuntimeEnvironment) {
+    checkDeployments(env: HardhatRuntimeEnvironment) {
         return fs.existsSync(this.getDeploymentsDir(env))
     }
 

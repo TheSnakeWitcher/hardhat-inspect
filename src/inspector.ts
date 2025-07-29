@@ -4,7 +4,9 @@ import path from "path"
 
 import {
     Deployments,
+    DeploymentFetcher,
     HardhatDeployDeploymentFetcher,
+    HardhatIgnitionDeploymentFetcher,
 } from "./deployment-resolver"
 
 interface ContractItem {
@@ -72,10 +74,18 @@ export class Inspector {
     }
 
     private refreshDeployments() {
-        const hardhatDeployFetcher = new HardhatDeployDeploymentFetcher()
-        if (hardhatDeployFetcher.checkDeployments(this.env)) {
-            return hardhatDeployFetcher.fetchDeployments(this.env)
-        }
+        const hardhatDeployFetcher: Array<DeploymentFetcher> = [
+            new HardhatIgnitionDeploymentFetcher(),
+            new HardhatDeployDeploymentFetcher(),
+        ]
+            
+        let deployments: Deployments = {}
+        hardhatDeployFetcher.forEach( (deploySystem: DeploymentFetcher) => {
+            if (deploySystem.checkDeployments(this.env)) {
+                Object.assign(deployments, deploySystem.fetchDeployments(this.env));
+            }
+        })
+        return deployments
     }
 
     private getData(abi: any) {
@@ -83,15 +93,8 @@ export class Inspector {
         const events: any = {}
 
         for (let item of abi) {
-
-            if (item.type == "error") {
-                errors[item.name] = item.name
-            }
-
-            if (item.type == "event") {
-                events[item.name] = item.name
-            }
-
+            if (item.type == "error") errors[item.name] = item.name
+            if (item.type == "event") events[item.name] = item.name
         }
 
         return { errors, events }
