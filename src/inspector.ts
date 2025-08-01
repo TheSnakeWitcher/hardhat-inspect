@@ -9,24 +9,20 @@ import {
     HardhatIgnitionDeploymentFetcher,
 } from "./deployment-resolver"
 
-interface ContractItem {
-    [contractname: string]: Item;
+interface ContractAttribute {
+    [contractname: string]: Attribute ;
 }
 
-interface Item {
+interface Attribute {
     [itemname: string]: string;
 }
 
-interface ContractAttribute {
-    [contractName: string]: string;
-}
-
 export class Inspector {
-    public contractNames : ContractAttribute ;
-    public abis : any ;
-    public events : ContractItem ;
-    public errors : ContractItem ;
+    public contractNames : Attribute ;
+    public events : ContractAttribute ;
+    public errors : ContractAttribute ;
     public deployments: Deployments ;
+    public abis : any ;
     private env ;
 
     constructor(env: HardhatRuntimeEnvironment) {
@@ -121,16 +117,16 @@ export class Inspector {
     private saveAbis(abisPath: string) {
         this.createDirIfNotExists(abisPath)
         for (let contract in this.contractNames) {
-            const abi = this.abis[contract]
-            const out = path.join(abisPath, `${contract}.json`)
-            fs.writeFileSync(out, JSON.stringify(abi, null, 2))
+            const abi = JSON.stringify(this.abis[contract], null,2)
+            const tsAbi = `const abi = ${abi} as const \nexport default abi ;`
+
+            fs.writeFileSync(path.join(abisPath, `${contract}.json`), abi)
+            fs.writeFileSync(path.join(abisPath,`${contract}.ts`), tsAbi)
         }
     }
 
     private createDirIfNotExists(dir: string) {
-        if ( !fs.existsSync(dir) ) {
-            fs.mkdirSync(dir)
-        }
+        if ( !fs.existsSync(dir) ) fs.mkdirSync(dir)
     }
 
 }
